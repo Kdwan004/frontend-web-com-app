@@ -1,0 +1,392 @@
+:root {
+  --primary-color: #00ff9d;
+  --primary-hover: #00cc7d;
+  --error-color: #ff3e3e;
+  --success-color: #00ff9d;
+  --background-color: #0a0a0f;
+  --card-background: #1a1a2e;
+  --text-primary: #ffffff;
+  --text-secondary: #8b8b9c;
+  --border-color: #2a2a3e;
+  --accent-color: #ff00ff;
+  --gradient-start: #1a1a2e;
+  --gradient-end: #16213e;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  overflow: auto; /* ✅ Allow scrolling if needed */
+}
+
+.app {
+  max-width: 800px;
+  max-height: 1300px;
+  margin: 40px auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+h1 {
+  margin: 0 0 2rem;
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* Login and Register Forms */
+.auth-form {
+  margin: 0 auto;
+  padding: 3rem;
+  max-width: 400px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 24px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+/* Add a heading style */
+.form-title {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: var(--text-primary);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+input {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  font-size: 1.1rem;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 255, 157, 0.1);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.center-link {
+  text-align: center;
+}
+
+.link-button {
+  background: none;
+  border: none;
+  color: var(--text-secondary); /* Previously was --primary-color */
+  font-size: 0.85rem;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  font-weight: 400;
+  transition: color 0.2s ease;
+}
+
+.link-button:hover {
+  color: var(--primary-color);
+}
+
+
+button[type="submit"] {
+  background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+  color: var(--background-color);
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 12px;
+  width: 100%;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+  letter-spacing: 1px;
+}
+
+button[type="submit"]:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0, 255, 157, 0.25);
+}
+
+
+/* Portal Styles */
+.portal {
+  max-width: 1200px !important;
+  margin: 0 auto;
+}
+
+.portal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3rem;
+}
+
+.portal-actions {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.portal-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-align: center;
+  backdrop-filter: blur(5px);
+}
+
+.portal-button:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 255, 157, 0.2);
+  border-color: var(--primary-color);
+}
+
+.button-icon {
+  font-size: 3.5rem;
+  margin-bottom: 1.5rem;
+  color: var(--primary-color);
+}
+
+.button-text {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.button-description {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* Chat Styles */
+.chat {
+  width: 100%;
+  height: 90vh;
+  background: var(--card-background);
+  border-radius: 24px;
+  box-shadow: 0 0 30px rgba(0, 255, 157, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid rgba(0, 255, 157, 0.1);
+  margin: 0 auto;
+}
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  background: var(--card-background);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.chat-header h1 {
+  margin: 0;
+  font-size: 2rem;
+  color: var(--primary-color);
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.message {
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  border-radius: 16px;
+  max-width: 70%;
+  position: relative;
+  backdrop-filter: blur(5px);
+}
+
+.message.sent {
+  background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+  color: var(--background-color);
+  margin-left: auto;
+  border: 1px solid rgba(0, 255, 157, 0.2);
+}
+
+.message.received {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  margin-right: auto;
+  border: 1px solid var(--border-color);
+}
+
+.message strong {
+  font-size: 1.1rem;
+  margin-right: 1rem;
+}
+
+.message .timestamp {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.message p {
+  margin: 1rem 0 0;
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+.inputContainer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem 2rem;
+  background: var(--card-background);
+  border-top: 1px solid var(--border-color);
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+}
+
+.inputContainer input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.inputContainer button {
+  height: 48px; /* match input height */
+  padding: 0rem; /* horizontal padding only */
+  background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+  color: var(--background-color);
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+  margin-left: 0.5rem;
+} */
+
+
+.send-button {
+  padding: 1rem 2rem;
+  background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+  color: var(--background-color);
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.send-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 255, 157, 0.2);
+}
+
+
+/* Navigation Buttons */
+.back-button,
+.logout-button {
+  top: 1rem;
+  right: 2rem; /* changed from left to right */
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+  width: auto;
+  min-width: 120px;
+  z-index: 10;
+}
+
+.back-button {
+  left: 2rem;
+}
+
+.logout-button {
+  right: 2rem;
+  background: rgba(255, 62, 62, 0.1);
+  color: var(--error-color);
+}
+
+.back-button:hover,
+.logout-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 255, 157, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--primary-color);
+}
+
+/* Direct Message Search */
+.direct-message {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 3rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 24px;
+  border: 1px solid var(--border-color);
+}
+
+.direct-message-header {
+  margin-bottom: 2rem;
+}
+
+.direct-message-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Error and Success Messages */
+.error-message,
+.success-message {
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.error-message {
+  background: rgba(255, 62, 62, 0.1);
+  color: var(--error-color);
+  border: 1px solid var(--error-color);
+}
+
+.success-message {
+  background: rgba(0, 255, 157, 0.1);
+  color: var(--success-color);
+  border: 1px solid var(--success-color);
+}
