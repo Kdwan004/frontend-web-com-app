@@ -103,8 +103,8 @@ const GroupFiles: React.FC = () => {
           <button onClick={() => navigate(`/group/${groupId}/calendar`)} className="action-button">
             Calendar
           </button>
-          <button onClick={() => navigate(`/group/${groupId}`)} className="action-button">
-            Back to Chat
+          <button onClick={() => navigate('/portal')} className="action-button">
+            Back to Portal
           </button>
         </div>
       </header>
