@@ -11,6 +11,9 @@
   --accent-color: #ff00ff;
   --gradient-start: #1a1a2e;
   --gradient-end: #16213e;
+  --primary-rgb: 0,255,157;
+  --accent-rgb: 255,0,255;
+  --card-background-rgb: 26, 26, 46;
 }
 
 body {
@@ -24,7 +27,7 @@ body {
   align-items: center;
   justify-content: center;
   padding: 2rem;
-  overflow: auto; /* ✅ Allow scrolling if needed */
+  overflow: auto; /* Reverted: Allow scrolling if needed */
 }
 
 .app {
@@ -35,6 +38,8 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  /* Reverted: Removed width: 100%, height: 100%, display:flex, flex-direction: column, overflow:hidden */
+  /* The chat-container and group-chat-page might need height adjustments now */
 }
 
 h1 {
@@ -496,5 +501,961 @@ button[type="submit"]:hover:not(:disabled) {
   justify-content: center;
   height: 100%;
   color: var(--text-secondary);
+}
+
+/* Portal Page - Tabbed Layout Specific Styles - Cyberpunk Theme */
+.portal-tabbed {
+  display: flex;
+  flex-direction: column;
+  max-width: 900px; /* Or your preferred max-width */
+  margin: 20px auto;
+  padding: 20px;
+  background-color: var(--card-background); /* Theme background */
+  border-radius: 18px; /* Consistent with auth-form */
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1); /* Consistent with auth-form */
+  color: var(--text-primary);
+}
+
+.portal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--border-color); /* Theme border */
+  margin-bottom: 20px;
+}
+
+.portal-header h1 {
+  color: var(--primary-color); /* Theme primary color */
+  font-size: 1.8em;
+  margin: 0; /* Reset margin for h1 inside header */
+  text-transform: uppercase; /* Match other h1 */
+  letter-spacing: 1.5px; /* Match other h1 */
+}
+
+.portal-user-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.portal-user-info span {
+  font-size: 0.95em;
+  color: var(--text-secondary); /* Theme secondary text */
+}
+
+.portal-tabs {
+  display: flex;
+  margin-bottom: 20px;
+  background-color: rgba(255, 255, 255, 0.03); /* Slightly different from card for depth */
+  border-radius: 12px; /* Consistent border-radius */
+  padding: 5px;
+  border: 1px solid var(--border-color);
+}
+
+.tab-button {
+  padding: 10px 15px;
+  border: none;
+  background-color: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.95em;
+  font-weight: 500;
+  border-radius: 8px; 
+  transition: background-color 0.2s ease, color 0.2s ease;
+  flex-grow: 1;
+  text-align: center;
+}
+
+.tab-button:hover {
+  background-color: rgba(var(--primary-rgb, 0,255,157), 0.1); /* Use primary color with alpha for hover */
+  color: var(--primary-color);
+}
+
+.tab-button.active {
+  background-color: var(--primary-color);
+  color: var(--background-color); /* Dark text on primary bg */
+  font-weight: 600;
+}
+
+.portal-tabs .nav-button-dm {
+  margin-left: auto;
+  flex-grow: 0;
+  background-color: rgba(var(--accent-rgb, 255,0,255), 0.2); /* Accent color for DM button */
+  color: var(--accent-color);
+  border: 1px solid var(--accent-color);
+}
+
+.portal-tabs .nav-button-dm:hover {
+  background-color: rgba(var(--accent-rgb, 255,0,255), 0.3);
+  color: var(--accent-color);
+}
+
+.portal-tab-content {
+  padding: 15px;
+  /* background-color: var(--card-background); // Already set on portal-tabbed, maybe a slightly different shade if needed */
+  border-radius: 12px;
+  /* box-shadow: 0 2px 8px rgba(0,0,0,0.05); // Optional, might be too much with card background */
+  min-height: 300px;
+}
+
+.tab-pane h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: var(--primary-color);
+  font-size: 1.5em;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.groups-list {
+  list-style: none;
+  padding: 0;
+}
+
+.group-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px; /* Consistent radius */
+  margin-bottom: 10px;
+  background-color: rgba(255, 255, 255, 0.03); /* Subtle background for items */
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.group-item.my-group-item.interactive {
+  cursor: pointer;
+}
+
+.group-item.my-group-item.interactive:hover {
+  background-color: rgba(var(--primary-rgb, 0,255,157), 0.1);
+  border-color: var(--primary-color);
+}
+
+.group-item .group-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.group-item .group-name {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 1.05em;
+}
+
+.group-item .member-count {
+  font-size: 0.85em;
+  color: var(--text-secondary);
+}
+
+.join-button {
+  padding: 6px 12px;
+  font-size: 0.9em;
+  background: var(--primary-color);
+  color: var(--background-color);
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.join-button:hover:not(:disabled) {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.join-button:disabled {
+  background-color: var(--text-secondary);
+  color: var(--card-background);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Styling for create group form */
+.group-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 450px; /* Limit form width */
+  margin: 10px auto; /* Center it a bit */
+}
+
+.group-form input[type="text"] {
+  /* Uses existing global input styles which are themed */
+}
+
+.group-form .button-primary {
+  /* Uses existing global button[type="submit"] styles which are themed */
+}
+
+.empty-list-message {
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 20px;
+  font-style: italic;
+}
+
+/* Global Error/Success Message Styling */
+.global-portal-error,
+.global-portal-success {
+  padding: 12px 18px;
+  margin: 0 0 20px 0;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 1em; 
+  font-weight: 500;
+  cursor: pointer; 
+}
+
+.global-portal-error {
+  background: rgba(255, 62, 62, 0.15); /* error-color with alpha */
+  color: var(--error-color);
+  border: 1px solid var(--error-color);
+}
+
+.global-portal-success {
+  background: rgba(0, 255, 157, 0.15); /* success-color / primary-color with alpha */
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+}
+
+/* Ensure portal-header elements (logout button) are styled */
+.portal-header .logout-button {
+    /* Using existing .logout-button styles which are themed */
+}
+
+.portal-tab-content .portal-section {
+    margin-bottom: 30px;
+}
+
+.portal-tab-content .portal-section:last-child {
+    margin-bottom: 0;
+}
+
+/* GroupChat.tsx Specific Styles - Cyberpunk Theme */
+
+.group-chat-page {
+  /* Uses .chat-container for base structure, .themed-background for bg */
+  /* Specific overrides or additions for group chat can go here if needed */
+  /* For example, if the overall height or layout needs to differ from DM */
+}
+
+.app.chat-container.group-chat-page.themed-background {
+    background: var(--background-color); /* Ensure main page background is applied */
+    display: flex; /* Added for sidebar layout */
+    height: 80vh; /* Adjusted: Fixed or relative height may be needed now app isn't 100vh */
+    max-height: 700px; /* Example: constrain height */
+    padding-top: 1rem; /* Add padding to prevent top content being obscured */
+    box-sizing: border-box; /* Ensure padding doesn't add to height */
+}
+
+.chat-container.group-chat-page {
+    border: 1px solid var(--primary-color); /* Prominent border for group chat page */
+    box-shadow: 0 0 40px rgba(var(--primary-rgb), 0.2); /* More pronounced glow */
+}
+
+.group-chat-header {
+  /* Uses .chat-header for base structure */
+  /* No specific overrides needed unless design diverges significantly */
+}
+
+.group-chat-header h1 {
+    /* Uses existing .chat-header h1 styles */
+    letter-spacing: 1px; /* Slightly less than main h1 */
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.action-button {
+    padding: 8px 12px;
+    font-size: 0.9em;
+    background-color: rgba(var(--primary-rgb), 0.15);
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.action-button:hover:not(:disabled) {
+    background-color: rgba(var(--primary-rgb), 0.3);
+}
+
+.action-button.refresh-button {
+    font-size: 1.2em; /* Make icon slightly larger */
+}
+
+.action-button.portal-nav-button {
+    /* Similar to portal page buttons for consistency if desired */
+}
+
+.chat-error-message {
+    /* Uses .error-message from global styles */
+    margin: 10px 20px; /* More specific margin for chat context */
+    border-radius: 8px;
+}
+
+.group-chat-messages {
+  /* Uses .chat-messages for base structure */
+  /* Already themed with background: rgba(0,0,0,0.2) */
+  padding: 1rem 1.5rem; /* Consistent padding */
+}
+
+.group-chat-messages .message {
+  /* Uses global .message, .sent, .received which are already themed */
+  /* Add specific tweaks if needed */
+  padding: 0.8rem 1.2rem; /* Slightly less padding than DM for more messages */
+  max-width: 75%; /* Can adjust width */
+}
+
+.group-chat-messages .message .message-sender {
+  display: block;
+  font-weight: 600;
+  color: var(--accent-color); /* Use accent for sender name in groups */
+  margin-bottom: 0.3em;
+  font-size: 0.9em;
+}
+
+.group-chat-messages .message.sent .message-sender {
+    /* Sender name not typically shown for own messages, but if it were: */
+    color: var(--background-color); /* Or a muted version of primary */
+    opacity: 0.8;
+}
+
+.group-chat-messages .message .message-content {
+    /* Uses global .message p */
+    font-size: 1em; /* Slightly smaller for group chat */
+    margin: 0 0 0.4em 0;
+}
+
+.group-chat-messages .message .timestamp {
+  /* Uses global .message .timestamp */
+  font-size: 0.75em; /* Smaller timestamp */
+  text-align: right;
+  display: block;
+}
+
+.group-input-container {
+    /* Uses .inputContainer for base structure */
+    /* Already themed */
+}
+
+.system-message {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 1rem;
+    font-style: italic;
+    font-size: 0.9em;
+}
+
+/* Group Info Footer */
+.group-info-footer {
+    padding: 1rem 1.5rem;
+    background-color: rgba(var(--card-background-rgb), 0.7); /* Slightly different from main bg */
+    border-top: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: 0.9em;
+}
+
+.group-info-footer h3 {
+    margin-top: 0;
+    margin-bottom: 0.8em;
+    color: var(--primary-color);
+    font-size: 1.1em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.group-members-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 0.8em;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.group-members-list li {
+    background-color: rgba(var(--primary-rgb), 0.05);
+    color: var(--text-secondary);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    border: 1px solid transparent;
+}
+
+.group-members-list li.current-user-member {
+    color: var(--primary-color);
+    font-weight: 600;
+    border-color: var(--primary-color);
+}
+
+.admin-tag {
+    color: var(--accent-color);
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+.group-creation-info {
+    font-size: 0.85em;
+    text-align: center;
+    opacity: 0.7;
+}
+
+/* Centered message for loading/error states outside full chat view */
+.app-container.centered-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 80vh; /* Adjust as needed */
+    text-align: center;
+    padding: 20px;
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 18px;
+}
+
+.app-container.centered-message .error-message {
+    margin-bottom: 20px;
+}
+
+.app-container.centered-message .portal-nav-button {
+    /* Style similar to other portal buttons if needed */
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+    color: var(--background-color);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+/* Group Chat Input Container */
+.group-input-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem 2rem;
+  background: var(--card-background);
+  border-top: 1px solid var(--border-color);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.group-input-container input {
+  padding: 0.9rem 1.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  font-size: 1rem; /* Slightly adjusted for balance */
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.group-input-container input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 255, 157, 0.1);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.group-input-container .send-button {
+  padding: 0.9rem 1.5rem;
+  background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+  color: var(--background-color);
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem; /* Matched font size */
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+  white-space: nowrap;
+  box-sizing: border-box;
+  display: flex; /* For centering text if needed */
+  align-items: center; /* For centering text if needed */
+  justify-content: center; /* For centering text if needed */
+}
+
+.group-input-container .send-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 255, 157, 0.2);
+}
+
+.group-input-container .send-button:disabled {
+  opacity: 0.7;
+}
+
+/* Group Members Sidebar */
+.group-members-sidebar {
+    width: 250px; /* Adjust width as needed */
+    background-color: rgba(var(--card-background-rgb), 0.5); /* Slightly transparent card background */
+    border-right: 1px solid var(--border-color);
+    padding: 1.5rem;
+    overflow-y: auto; /* Allow scrolling if content exceeds height */
+    color: var(--text-secondary);
+    flex-direction: column;
+    height: 100%; /* Make sidebar take full height of parent */
+    box-sizing: border-box;
+}
+
+.group-members-sidebar h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+    font-size: 1.3em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+
+.group-members-sidebar .group-members-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 1rem; /* Space before creation info */
+    flex-grow: 1; /* Allows list to take available space before creation info pushes to bottom */
+    overflow-y: auto; /* Scroll for long member lists */
+}
+
+.group-members-sidebar .group-members-list li {
+    background-color: rgba(var(--primary-rgb), 0.05);
+    color: var(--text-secondary);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.95em;
+    margin-bottom: 8px;
+    border: 1px solid transparent;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.group-members-sidebar .group-members-list li:hover {
+    background-color: rgba(var(--primary-rgb), 0.1);
+    border-color: var(--primary-color);
+}
+
+.group-members-sidebar .group-members-list li.current-user-member {
+    color: var(--primary-color);
+    font-weight: 600;
+    border-color: var(--primary-color);
+    background-color: rgba(var(--primary-rgb), 0.15);
+}
+
+.group-members-sidebar .admin-tag {
+    color: var(--accent-color);
+    font-size: 0.9em;
+    font-weight: 500;
+    margin-left: 5px;
+}
+
+.group-members-sidebar .group-creation-info {
+    font-size: 0.8em;
+    text-align: center;
+    opacity: 0.8;
+    margin-top: auto; /* Pushes to the bottom of the sidebar */
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+/* Main Chat Content Area */
+.group-chat-main-content {
+    flex: 1; /* Takes remaining width */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Important: messages will scroll, not this container */
+    height: 100%; /* Make main content take full height of its flex parent */
+    box-sizing: border-box;
+}
+
+.group-chat-main-content .chat-header {
+    /* Header styles are mostly fine, ensure it doesn't shrink */
+    flex-shrink: 0;
+}
+
+.group-chat-main-content .group-chat-messages {
+    flex-grow: 1; /* Allows messages to take up available space */
+    overflow-y: auto; /* Enables scrolling for messages */
+    /* padding adjustments might be needed if they look off */
+}
+
+.group-chat-main-content .group-input-container {
+    /* Input container is already position:fixed, so it will overlay correctly */
+    /* No changes needed here unless specific adjustments for this layout */
+    flex-shrink: 0; /* Prevent input from shrinking */
+}
+
+/* Remove or adjust old footer styles if they conflict or are no longer needed */
+.group-info-footer {
+    /* display: none; /* If it was a distinct element and is now replaced by sidebar */
+    /* Or adjust if this class is still used elsewhere meaningfully */
+}
+
+/* Calendar Page Specific Styles */
+.calendar-page {
+    padding: 2rem;
+    background-color: var(--card-background); /* Similar to other main views */
+    border-radius: 18px;
+    border: 1px solid var(--border-color);
+    margin: 2rem auto; /* Centering if app container is larger */
+    max-width: 900px; /* Control calendar width */
+    color: var(--text-primary);
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+}
+
+.calendar-header h1 {
+    color: var(--primary-color);
+    font-size: 1.8em;
+    margin: 0;
+}
+
+.calendar-header .action-button {
+    /* Using existing .action-button styles from GroupChat, or define more specific if needed */
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9em;
+}
+
+.calendar-view h2 {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 1.5em;
+    margin-bottom: 1.5rem;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 10px;
+    background-color: rgba(0,0,0, 0.1);
+}
+
+.calendar-day-header,
+.calendar-day-cell {
+    background-color: rgba(var(--card-background-rgb), 0.7);
+    padding: 10px;
+    text-align: center;
+    border-radius: 4px;
+    min-height: 70px; /* Give cells some height */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.calendar-day-header {
+    font-weight: 600;
+    color: var(--primary-color);
+    min-height: auto;
+    padding: 8px;
+}
+
+.calendar-day-cell .day-number {
+    font-size: 0.9em;
+    margin-bottom: 5px;
+    color: var(--text-secondary);
+}
+
+/* Styles for buttons in Portal.tsx group list */
+.group-item.my-group-item {
+    /* existing styles for spacing... */
+    display: flex; /* Align info and actions horizontally */
+    justify-content: space-between;
+    align-items: center;
+}
+
+.group-info-portal {
+    cursor: pointer; /* Make name clickable */
+    flex-grow: 1; /* Allow name to take space */
+}
+
+.group-actions-portal {
+    display: flex;
+    gap: 0.5rem; /* Space between buttons */
+}
+
+.action-button-portal {
+    padding: 6px 10px;
+    font-size: 0.85em;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    border: 1px solid var(--border-color);
+    background-color: rgba(var(--primary-rgb), 0.1);
+    color: var(--primary-color);
+}
+
+.action-button-portal:hover {
+    background-color: rgba(var(--primary-rgb), 0.2);
+}
+
+.action-button-portal.calendar-button {
+    background-color: rgba(var(--accent-rgb), 0.1);
+    color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+.action-button-portal.calendar-button:hover {
+    background-color: rgba(var(--accent-rgb), 0.2);
+}
+
+/* Style for calendar button in GroupChat header */
+.calendar-nav-button {
+    /* .action-button base is fine, this is just for specificity if needed */
+    /* Maybe a slightly different icon color or background if desired */
+}
+
+/* Enhancements for GroupCalendar.tsx */
+.calendar-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding: 0.5rem 1rem;
+    background-color: rgba(var(--card-background-rgb), 0.5);
+    border-radius: 8px;
+}
+
+.calendar-controls h2 {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 1.4em;
+}
+
+.month-nav-button {
+    background-color: var(--primary-color);
+    color: var(--background-color);
+    border: none;
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.month-nav-button:hover {
+    background-color: var(--primary-hover);
+}
+
+.calendar-day-cell.empty {
+    background-color: transparent;
+    border: none;
+}
+
+.calendar-day-cell.selected {
+    border: 2px solid var(--accent-color);
+    background-color: rgba(var(--accent-rgb), 0.1);
+}
+
+.tasks-on-day {
+    margin-top: 5px;
+    font-size: 0.75em;
+    width: 100%;
+}
+
+.task-item {
+    background-color: rgba(var(--primary-rgb), 0.15);
+    color: var(--primary-color);
+    padding: 3px 5px;
+    border-radius: 3px;
+    margin-bottom: 3px;
+    word-break: break-word; /* Prevent long tasks from breaking layout */
+    text-align: left;
+}
+
+.task-management-section {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: rgba(var(--card-background-rgb), 0.3);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.task-management-section h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+    font-size: 1.3em;
+}
+
+.task-form .form-group {
+    margin-bottom: 1rem;
+}
+
+.task-form label {
+    display: block;
+    margin-bottom: 0.3rem;
+    color: var(--text-secondary);
+    font-size: 0.9em;
+}
+
+.task-form input[type="text"] {
+    /* Assuming global input styles are mostly fine, or add specific overrides */
+    width: calc(100% - 2rem); /* Adjust if padding is different */
+}
+
+.add-task-button {
+    /* Using .action-button from before or can be more specific */
+    display: block;
+    margin-top: 0.5rem;
+}
+
+/* GroupFiles.tsx Specific Styles */
+.files-page {
+    padding: 2rem;
+    background-color: var(--card-background);
+    border-radius: 18px;
+    border: 1px solid var(--border-color);
+    margin: 2rem auto;
+    max-width: 900px;
+    color: var(--text-primary);
+}
+
+.files-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+}
+
+.files-header h1 {
+    color: var(--primary-color);
+    font-size: 1.8em;
+    margin: 0;
+}
+
+.files-header > div {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.global-files-error,
+.global-files-success {
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.global-files-error {
+    background-color: rgba(var(--error-color), 0.2);
+    color: var(--error-color);
+    border: 1px solid var(--error-color);
+}
+
+.global-files-success {
+    background-color: rgba(var(--success-color), 0.2);
+    color: var(--success-color);
+    border: 1px solid var(--success-color);
+}
+
+.file-upload-section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background-color: rgba(var(--card-background-rgb), 0.5);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.file-upload-section h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+}
+
+.file-input {
+    display: block;
+    margin-bottom: 0.75rem;
+    padding: 0.5rem;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background-color: rgba(255,255,255,0.05);
+    color: var(--text-primary);
+}
+
+.selected-file-info {
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+}
+
+.upload-button {
+    /* Uses .action-button styles, can add specifics */
+}
+
+.file-list-section h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+}
+
+.files-list {
+    list-style: none;
+    padding: 0;
+}
+
+.file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    background-color: rgba(255,255,255,0.03);
+}
+
+.file-item .file-name {
+    color: var(--text-primary);
+    word-break: break-all; /* For long filenames */
+}
+
+.view-download-button {
+    /* Uses .action-button styles, can add specifics */
+    margin-left: 1rem;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85em;
+}
+
+/* Style for files button in Portal group list */
+.action-button-portal.files-button {
+    background-color: rgba(70, 130, 180, 0.2); /* SteelBlue with alpha */
+    color: #4682B4; /* SteelBlue */
+    border-color: #4682B4;
+}
+
+.action-button-portal.files-button:hover {
+    background-color: rgba(70, 130, 180, 0.3);
+}
+
+/* Style for files button in GroupChat header */
+.files-nav-button {
+    /* .action-button base is fine, this is just for specificity if needed */
 }
 
