@@ -1,125 +1,96 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API_BASE_URL from './config';
+import { generateKeyPair, storePrivateKey } from './utils/crypto';
+import './index.css';
 
 const Register: React.FC = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const navigate = useNavigate();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const validateForm = () => {
-    setError("");
-    setSuccess("");
-
-    if (!username || !password || !confirmPassword) {
-      setError("All fields are required");
-      return false;
-    }
-
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return false;
-    }
-
-    return true;
-  };
-
-  const handleRegister = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!validateForm()) return;
-
-    setIsLoading(true);
-    setError("");
-    setSuccess("");
+    setError('');
+    setLoading(true);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/register`, {
+      // Generate key pair
+      const keyPair = await generateKeyPair();
+
+      // Store private key in localStorage
+      storePrivateKey(keyPair.privateKey);
+
+      // Register user with public key
+      const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({
+          username,
+          password,
+          public_key: keyPair.publicKey
+        }),
       });
 
       const data = await response.json();
 
-      if (response.ok) {
-        setSuccess(data.registrationStatus || "Registered successfully!");
-        localStorage.setItem("username", username);
-        setTimeout(() => navigate("/portal"), 1500);
-      } else {
-        setError(data.error || "Registration failed. Please try again.");
+      if (!response.ok) {
+        throw new Error(data.error || 'Registration failed');
       }
-    } catch (err) {
-      setError("Network error. Please check your connection.");
-      console.error('Error:', err);
+
+      // Store username in localStorage
+      localStorage.setItem('username', username);
+      
+      // Navigate to portal
+      navigate('/portal');
+    } catch (error) {
+      console.error('Registration error:', error);
+      setError(error instanceof Error ? error.message : 'Registration failed');
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   return (
     <div className="app">
-      <div className="auth-form">
-        <h1 className="form-title">Register</h1>
-        <form onSubmit={handleRegister}>
+      <div className="auth-container">
+        <h1>Register</h1>
+        <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
+            <label htmlFor="username">Username:</label>
             <input
               type="text"
-              placeholder="Enter your username"
+              id="username"
               value={username}
-              onChange={e => setUsername(e.target.value)}
-              disabled={isLoading}
+              onChange={(e) => setUsername(e.target.value)}
               required
             />
           </div>
-
           <div className="form-group">
+            <label htmlFor="password">Password:</label>
             <input
               type="password"
-              placeholder="Enter your password"
+              id="password"
               value={password}
-              onChange={e => setPassword(e.target.value)}
-              disabled={isLoading}
+              onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
-
-          <div className="form-group">
-            <input
-              type="password"
-              placeholder="Confirm your password"
-              value={confirmPassword}
-              onChange={e => setConfirmPassword(e.target.value)}
-              disabled={isLoading}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <button type="submit" disabled={isLoading}>
-              {isLoading ? "Processing..." : "Register"}
-            </button>
-          </div>
-
-          <div className="form-group center-link">
-            <button
-              type="button"
-              onClick={() => navigate("/login")}
-              disabled={isLoading}
-              className="link-button"
-            >
-              Already have an account? Login
-            </button>
-          </div>
+          <button type="submit" disabled={loading}>
+            {loading ? 'Registering...' : 'Register'}
+          </button>
         </form>
-        {error && <p className="error">{error}</p>}
-        {success && <p className="success">{success}</p>}
+        {error && <div className="error-message">{error}</div>}
+        <p className="auth-link">
+          Already have an account?{' '}
+          <button onClick={() => navigate('/login')} className="link-button">
+            Login
+          </button>
+        </p>
       </div>
     </div>
   );
