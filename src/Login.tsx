@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import API_BASE_URL from './config';
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState("");
@@ -31,7 +32,7 @@ const Login: React.FC = () => {
     setSuccess("");
 
     try {
-      const response = await fetch('https://web-app-image-320303374114.australia-southeast1.run.app/api/login', {
+      const response = await fetch(`${API_BASE_URL}/api/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -41,10 +42,10 @@ const Login: React.FC = () => {
   
       const data = await response.json();
       
-      if (response.ok && data.loginStatus) {
+      if (response.ok && data.message === "Login successful") {
         setSuccess(data.message);
         localStorage.setItem("username", username);
-        setTimeout(() => navigate("/portal"), 1500); // Changed from /chat to /portal
+        setTimeout(() => navigate("/portal"), 1500);
       } else {
         setError(data.error || "Login failed. Please try again.");
       }

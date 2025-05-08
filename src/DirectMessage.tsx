@@ -1,186 +1,215 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import API_BASE_URL from './config';
+import './index.css';
 
 interface Message {
-  timestamp: string;
   sender: string;
-  receiver: string;
-  message: string;
+  content: string;
+  timestamp: string;
+}
+
+interface ChatPartner {
+  username: string;
 }
 
 const DirectMessage: React.FC = () => {
-  const [username, setUsername] = useState<string>('');
-  const [message, setMessage] = useState<string>('');
-  const [error, setError] = useState<string>('');
-  const [success, setSuccess] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false);
-  const [selectedUser, setSelectedUser] = useState<string>('');
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
   const navigate = useNavigate();
+  const [username, setUsername] = useState<string>(localStorage.getItem('username') || '');
+  const [receiver, setReceiver] = useState<string>('');
+  const [message, setMessage] = useState<string>('');
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [error, setError] = useState<string>('');
+  const [chatPartners, setChatPartners] = useState<ChatPartner[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [newChatInput, setNewChatInput] = useState<string>('');
 
   useEffect(() => {
-    const storedUsername = localStorage.getItem('username');
-    if (!storedUsername) {
+    if (!username) {
       navigate('/login');
     }
-  }, [navigate]);
+  }, [username, navigate]);
 
   useEffect(() => {
-    if (selectedUser) {
-      fetchMessages();
-      const interval = setInterval(fetchMessages, 2000);
-      return () => clearInterval(interval);
-    }
-  }, [selectedUser]);
-  
+    fetchChatPartners();
+  }, [username]);
 
-  const fetchMessages = async () => {
+  const fetchChatPartners = async () => {
     try {
-      const currentUser = localStorage.getItem('username');
-      const response = await axios.get('https://web-app-image-320303374114.australia-southeast1.run.app/api/messages/conversation', {
-        params: {
-          username1: currentUser,
-          username2: selectedUser
-        }
-      });
-
-      if (response.data.status === 'success') {
-        setMessages(response.data.messages);
+      const response = await fetch(`${API_BASE_URL}/api/messages/partners?username=${username}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch chat partners');
       }
+      const data = await response.json();
+      setChatPartners(data.partners.map((partner: string) => ({ username: partner })));
     } catch (error) {
-      console.error('Failed to fetch messages:', error);
+      console.error('Error fetching chat partners:', error);
+      setError('Failed to load chat partners');
     }
   };
 
-  const handleUserSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setSuccess('');
+  const fetchMessages = async () => {
+    if (!receiver) return;
+    
     setLoading(true);
-
     try {
-      setSelectedUser(username);
-      setIsChatOpen(true);
-      setSuccess('Chat opened!');
-    } catch (error: any) {
-      setError('Failed to open chat. Please try again.');
+      console.log('Fetching messages for:', { username, receiver });
+      const response = await fetch(`${API_BASE_URL}/api/messages?username=${username}&partner=${receiver}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch messages');
+      }
+      const data = await response.json();
+      console.log('Received messages:', data);
+      setMessages(data.messages);
+      setTimeout(() => {
+        const messagesContainer = document.querySelector('.chat-messages');
+        if (messagesContainer) {
+          messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+      }, 100);
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+      setError('Failed to load messages');
     } finally {
       setLoading(false);
     }
   };
 
+  useEffect(() => {
+    if (receiver) {
+      fetchMessages();
+    }
+  }, [receiver]);
+
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!message.trim()) return;
+    if (!message.trim() || !receiver) return;
 
     try {
-      const sender = localStorage.getItem('username');
-      const response = await axios.post('https://web-app-image-320303374114.australia-southeast1.run.app/api/messages/send', {
-        sender,
-        receiver: selectedUser,
-        message
+      console.log('Sending message:', { sender: username, receiver, message });
+      const response = await fetch(`${API_BASE_URL}/api/messages/send`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sender: username,
+          receiver: receiver,
+          message: message,
+        }),
       });
 
-      if (response.data.status === 'success') {
-        setMessage('');
-        fetchMessages();
+      const data = await response.json();
+      console.log('Send message response:', data);
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to send message');
       }
-    } catch (error: any) {
-      setError('Failed to send message. Please try again.');
+
+      setMessage('');
+      fetchMessages();
+      setTimeout(() => {
+        const messagesContainer = document.querySelector('.chat-messages');
+        if (messagesContainer) {
+          messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+      }, 100);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      setError('Failed to send message');
     }
   };
 
-  if (!isChatOpen) {
-    return (
-      <div className="app">
-        <button 
-          className="back-button"
-          onClick={() => navigate('/portal')}
-        >
-          Back to Portal
-        </button>
-        <div className="direct-message">
-          <div className="direct-message-header">
-            <h1>Start a Conversation</h1>
-          </div>
+  const handlePartnerClick = (partner: string) => {
+    setReceiver(partner);
+  };
 
-          <form onSubmit={handleUserSearch} className="direct-message-form">
-            <div className="form-group">
-              <label htmlFor="username">Enter Username:</label>
-              <input
-                type="text"
-                id="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Enter username to chat with"
-                required
-              />
-            </div>
-
-            {error && <div className="error-message">{error}</div>}
-            {success && <div className="success-message">{success}</div>}
-
-            <button 
-              type="submit" 
-              className="send-button"
-              disabled={loading}
-            >
-              {loading ? 'Searching...' : 'Start Chat'}
-            </button>
-          </form>
-        </div>
-      </div>
-    );
-  }
+  const handleNewChatSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newChatInput.trim()) {
+      setReceiver(newChatInput.trim());
+      setNewChatInput('');
+    }
+  };
 
   return (
     <div className="app">
-      <button 
-        className="back-button"
-        onClick={() => {
-          setIsChatOpen(false);
-          setSelectedUser('');
-          setMessages([]);
-        }}
-      >
-        Back to Search
-      </button>
       <div className="chat">
         <div className="chat-header">
-          <h1>Chat with '{selectedUser}'</h1>
+          <h1>Direct Message</h1>
+          <button onClick={() => navigate('/portal')} className="back-button">Back to Portal</button>
         </div>
 
-    <div className="chat-messages">
-      {messages.length === 0 ? (
-        <p>Send first message...</p>
-      ) : (
-        messages.map((msg, index) => (
-          <div 
-            key={index} 
-            className={`message ${msg.sender === localStorage.getItem('username') ? 'sent' : 'received'}`}
-          >
-            <strong>{msg.sender}</strong>
-            <span className="timestamp">{msg.timestamp}</span>
-            <p>{msg.message}</p>
+        <div className="chat-content">
+          <div className="chat-sidebar">
+            <h2>Chat History</h2>
+            {chatPartners.length === 0 ? (
+              <p className="no-partners">No previous chats</p>
+            ) : (
+              <div className="partners-list">
+                {chatPartners.map((partner) => (
+                  <div
+                    key={partner.username}
+                    className={`partner-item ${receiver === partner.username ? 'active' : ''}`}
+                    onClick={() => handlePartnerClick(partner.username)}
+                  >
+                    {partner.username}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-        ))
-      )}
-    </div>
 
-        <form onSubmit={handleSendMessage} className="inputContainer">
-          <input
-            type="text"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder="Type your message..."
-            required
-          />
-          <button type="submit" className="send-button">
-            Send
-          </button>
-        </form>
+          <div className="chat-main">
+            {!receiver ? (
+              <div className="select-partner">
+                <p>Select a chat partner from the sidebar or start a new conversation</p>
+                <form onSubmit={handleNewChatSubmit} className="new-chat-form">
+                  <input
+                    type="text"
+                    placeholder="Enter username to chat with"
+                    value={newChatInput}
+                    onChange={(e) => setNewChatInput(e.target.value)}
+                  />
+                  <button type="submit">Start Chat</button>
+                </form>
+              </div>
+            ) : (
+              <>
+                <div className="chat-messages">
+                  {loading ? (
+                    <div className="loading">Loading messages...</div>
+                  ) : messages.length === 0 ? (
+                    <div className="no-messages">No messages yet. Start the conversation!</div>
+                  ) : (
+                    messages.map((msg, index) => (
+                      <div
+                        key={index}
+                        className={`message ${msg.sender === username ? 'sent' : 'received'}`}
+                      >
+                        <strong>{msg.sender}</strong>
+                        <p>{msg.content}</p>
+                        <span className="timestamp">{msg.timestamp}</span>
+                      </div>
+                    ))
+                  )}
+                </div>
+
+                <form onSubmit={handleSendMessage} className="inputContainer">
+                  <input
+                    type="text"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder="Type your message..."
+                  />
+                  <button type="submit" className="send-button">Send</button>
+                </form>
+              </>
+            )}
+          </div>
+        </div>
+
+        {error && <div className="error-message">{error}</div>}
       </div>
     </div>
   );

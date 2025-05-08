@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import API_BASE_URL from './config';
 
 const Register: React.FC = () => {
   const [username, setUsername] = useState("");
@@ -37,7 +38,7 @@ const Register: React.FC = () => {
     setSuccess("");
 
     try {
-      const response = await fetch('https://web-app-image-320303374114.australia-southeast1.run.app/api/register', {
+      const response = await fetch(`${API_BASE_URL}/api/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
