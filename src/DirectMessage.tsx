@@ -1,12 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API_BASE_URL from './config';
 import './index.css';
+import { decryptMessageRsa, getPrivateKeyFromStorage } from './utils/encryption';
 
-interface Message {
+interface DisplayMessage {
+  id: string;
   sender: string;
   content: string;
+  originalContent: string;
   timestamp: string;
+  isDecrypted: boolean;
 }
 
 interface ChatPartner {
@@ -18,7 +22,7 @@ const DirectMessage: React.FC = () => {
   const [username, setUsername] = useState<string>(localStorage.getItem('username') || '');
   const [receiver, setReceiver] = useState<string>('');
   const [message, setMessage] = useState<string>('');
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<DisplayMessage[]>([]);
   const [error, setError] = useState<string>('');
   const [chatPartners, setChatPartners] = useState<ChatPartner[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -48,38 +52,76 @@ const DirectMessage: React.FC = () => {
     }
   };
 
-  const fetchMessages = async () => {
-    if (!receiver) return;
+  const fetchMessages = useCallback(async () => {
+    if (!receiver || !username) return;
     
     setLoading(true);
+    setError('');
     try {
-      console.log('Fetching messages for:', { username, receiver });
+      console.log(`Fetching messages for user: ${username}, partner: ${receiver}`);
       const response = await fetch(`${API_BASE_URL}/api/messages?username=${username}&partner=${receiver}`);
       if (!response.ok) {
-        throw new Error('Failed to fetch messages');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to fetch messages');
       }
       const data = await response.json();
-      console.log('Received messages:', data);
-      setMessages(data.messages);
+      console.log('Received raw messages:', data.messages);
+
+      const privateKey = getPrivateKeyFromStorage();
+
+      const processedMessages: DisplayMessage[] = await Promise.all(
+        data.messages.map(async (msg: any, index: number) => {
+          let displayContent = msg.content;
+          let successfullyDecrypted = false;
+          const messageId = msg.id || `msg-${index}-${new Date().getTime()}`;
+
+          if (privateKey) {
+            try {
+              displayContent = await decryptMessageRsa(msg.content, privateKey);
+              successfullyDecrypted = true;
+              console.log(`Message ${messageId} (sender: ${msg.sender}) decrypted successfully by ${username}.`);
+            } catch (decryptionError) {
+              console.warn(`User ${username} failed to decrypt message ${messageId} (sender: ${msg.sender}). This is expected if it's not a message sent by ${username}. Error:`, decryptionError);
+              displayContent = "[Encrypted message from " + msg.sender + "]";
+            }
+          } else {
+            console.warn(`User ${username} is missing private key. Cannot decrypt message ${messageId} (sender: ${msg.sender}).`);
+            displayContent = "[Cannot decrypt - Your private key is missing]";
+          }
+
+          return {
+            id: messageId,
+            sender: msg.sender,
+            content: displayContent,
+            originalContent: msg.content,
+            timestamp: msg.timestamp,
+            isDecrypted: successfullyDecrypted,
+          };
+        })
+      );
+
+      setMessages(processedMessages);
+      console.log('Processed messages with decryption attempt:', processedMessages);
+
       setTimeout(() => {
         const messagesContainer = document.querySelector('.chat-messages');
         if (messagesContainer) {
           messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
       }, 100);
-    } catch (error) {
-      console.error('Error fetching messages:', error);
-      setError('Failed to load messages');
+    } catch (err: any) {
+      console.error('Error fetching or processing messages:', err);
+      setError(err.message || 'Failed to load or decrypt messages');
     } finally {
       setLoading(false);
     }
-  };
+  }, [receiver, username]);
 
   useEffect(() => {
-    if (receiver) {
+    if (receiver && username) {
       fetchMessages();
     }
-  }, [receiver]);
+  }, [receiver, username, fetchMessages]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
